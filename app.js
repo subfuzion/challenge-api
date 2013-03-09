@@ -9,10 +9,6 @@ var xml2js = require('xml2js');
 
 var app = express();
 app.use(express.bodyParser());
-app.use(function(err, req, res, next) {
-    // default response content type for our routes
-    res.setHeader('Content-Type', 'application/json');
-});
 
 var db = new mongo.Db('challengedb',
 	new mongo.Server('ds033047.mongolab.com', 33047, {auto_reconnect: true}),
@@ -46,7 +42,7 @@ db.open(function(err, client) {
 // ==================================================================
 
 app.get('/', function(req, res, next) {
-    res.setHeader('Content-Type', 'text/html');
+    //res.setHeader('Content-Type', 'text/html');
     res.send('<a href="feed">Challenges</a>');
 });
 
@@ -57,16 +53,16 @@ app.get('/feed', function(req, res, next) {
           console.log(err);
           return next(err);
         } else {
-            var challenges = [];
-            
+            var feed = { challenges: [] };
+
             var stream = collection.find().stream();
-            
+
             stream.on('data', function(data) {
-                challenges.push(data);
+                feed.challenges.push(data);
             });
-            
+
             stream.on('end', function() {
-               res.send(JSON.stringify(challenges));
+               res.json(feed);
             });
         }
     })
@@ -79,7 +75,7 @@ app.get('/remotefeed', function(req, res, next) {
             console.log(err);
 			return next(err);
 		} else {
-			res.end(JSON.stringify(json));
+			res.json(json);
 		}
 	});
 });
@@ -95,7 +91,7 @@ app.get('/harvest', function(req, res, next) {
                     console.log(err);
 					return next(err);
 				} else {
-					res.end(JSON.stringify(data));
+					res.json(data)
 				}
 			});
 		}
