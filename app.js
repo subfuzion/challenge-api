@@ -52,6 +52,28 @@ app.get('/', function(req, res, next) {
 
 
 app.get('/feed', function(req, res, next) {
+    db.collection('challenges', function(err, collection) {
+        if (err) {
+          console.log(err);
+          return next(err);
+        } else {
+            var challenges = [];
+            
+            var stream = collection.find().stream();
+            
+            stream.on('data', function(data) {
+                challenges.push(data);
+            });
+            
+            stream.on('end', function() {
+               res.send(JSON.stringify(challenges));
+            });
+        }
+    })
+});
+
+
+app.get('/remotefeed', function(req, res, next) {
 	getFeed(function(err, json) {
 		if (err) {
             console.log(err);
@@ -124,16 +146,31 @@ function getFeed(callback)
 
 function saveFeed(data, callback) {
 	data.challenge.reverse().forEach(function(item) {
-		var challenge = item;
-
         db.collection('challenges', function(err, collection) {
             if (err) {
                 return callback(err);
+            } else {
+                collection.findOne({title: item.title}, function(err, entry) {
+                    if (err) {
+                        return callback(err);
+                    } else {
+                        if (entry) {
+                            console.log('entry exists: ' + entry.title);
+                        } else {
+                            collection.save(item, function(err, saved) {
+                                if (err) {
+                                    return callback(err);
+                                } else {
+                                    console.log("saved: " + item.title);
+                                }
+                            });
+                        }
+                    }
+                });
             }
         })
-
 	});
 
-	callback(null, data);
+	callback(null, true);
 };
 
