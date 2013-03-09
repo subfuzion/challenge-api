@@ -57,11 +57,17 @@ app.get('/feed', function(req, res, next) {
 
 
 app.get('/harvest', function(req, res, next) {
-	getFeed(function(err, json) {
+	getFeed(function(err, data) {
 		if (err) {
 			return next(err);
 		} else {
-			res.end(JSON.stringify(json));
+			saveFeed(data, function(err, success) {
+				if (err) {
+					return next(err);
+				} else {
+					res.end(JSON.stringify(data));
+				}
+			});
 		}
 	});
 
@@ -91,11 +97,16 @@ function getFeed(callback)
 		});
 
 		resp.on('end', function() {
-			xml2js.parseString(xml, function(err, js) {
+			var parseOptions = {
+				"explicitArray": false,
+				"explicitRoot": false
+			};
+
+			xml2js.parseString(xml, parseOptions, function(err, data) {
 				if (err) {
 					return callback(err);
 				} else {
-					callback(null, js);
+					callback(null, data);
 				}
 			});
 		})
@@ -103,7 +114,11 @@ function getFeed(callback)
 };
 
 
-function saveChallenges(callback) {
+function saveFeed(data, callback) {
+	data.challenge.reverse().forEach(function(item) {
+		var challenge = item;
+	});
 
+	callback(null, data);
 };
 
