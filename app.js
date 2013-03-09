@@ -11,29 +11,29 @@ var app = express();
 app.use(express.bodyParser());
 
 var db = new mongo.Db('challengedb',
-	new mongo.Server('ds033047.mongolab.com', 33047, {auto_reconnect: true}),
-	{w: 'majority'});
+    new mongo.Server('ds033047.mongolab.com', 33047, {auto_reconnect: true}),
+    {w: 'majority'});
 
 console.log('connecting to mongo');
 db.open(function(err, client) {
-	if (err) {
-		console.log('error opening db: ' + err);
-	} else {
-		db.addListener("error", function(error){
-			console.log("db error: " + error);
-		});
+    if (err) {
+        console.log('error opening db: ' + err);
+    } else {
+        db.addListener("error", function(error){
+            console.log("db error: " + error);
+        });
 
-		client.authenticate('api-user', 'challengedb', function(err, success) {
-			if (err) {
-				console.log('error authenticating with database');
-			} else {
-				var port = 8080;
-				app.listen(port, function () {
-					console.log('listening on ' + port);
-				});
-			}
-		});
-	}
+        client.authenticate('api-user', 'challengedb', function(err, success) {
+            if (err) {
+                console.log('error authenticating with database');
+            } else {
+                var port = 8080;
+                app.listen(port, function () {
+                    console.log('listening on ' + port);
+                });
+            }
+        });
+    }
 });
 
 
@@ -42,7 +42,7 @@ db.open(function(err, client) {
 // ==================================================================
 
 app.get('/', function(req, res, next) {
-    //res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Content-Type', 'text/html');
     res.send('<a href="feed">Challenges</a>');
 });
 
@@ -70,32 +70,32 @@ app.get('/feed', function(req, res, next) {
 
 
 app.get('/remotefeed', function(req, res, next) {
-	getFeed(function(err, json) {
-		if (err) {
+    getFeed(function(err, json) {
+        if (err) {
             console.log(err);
-			return next(err);
-		} else {
-			res.json(json);
-		}
-	});
+            return next(err);
+        } else {
+            res.json(json);
+        }
+    });
 });
 
 
 app.get('/harvest', function(req, res, next) {
-	getFeed(function(err, data) {
-		if (err) {
-			return next(err);
-		} else {
-			saveFeed(data, function(err, success) {
-				if (err) {
+    getFeed(function(err, data) {
+        if (err) {
+            return next(err);
+        } else {
+            saveFeed(data, function(err, success) {
+                if (err) {
                     console.log(err);
-					return next(err);
-				} else {
-					res.json(data)
-				}
-			});
-		}
-	});
+                    return next(err);
+                } else {
+                    res.json(data)
+                }
+            });
+        }
+    });
 
 });
 
@@ -110,38 +110,38 @@ app.get('/harvest', function(req, res, next) {
  */
 function getFeed(callback)
 {
-	var options = {
-		host: 'challenge.gov',
-		path: '/api/challenges.xml'
-	};
+    var options = {
+        host: 'challenge.gov',
+        path: '/api/challenges.xml'
+    };
 
-	http.request(options, function(resp) {
-		var xml = '';
+    http.request(options, function(resp) {
+        var xml = '';
 
-		resp.on('data', function(chunk) {
-			xml += chunk;
-		});
+        resp.on('data', function(chunk) {
+            xml += chunk;
+        });
 
-		resp.on('end', function() {
-			var parseOptions = {
-				"explicitArray": false,
-				"explicitRoot": false
-			};
+        resp.on('end', function() {
+            var parseOptions = {
+                "explicitArray": false,
+                "explicitRoot": false
+            };
 
-			xml2js.parseString(xml, parseOptions, function(err, data) {
-				if (err) {
-					return callback(err);
-				} else {
-					callback(null, data);
-				}
-			});
-		})
-	}).end();
+            xml2js.parseString(xml, parseOptions, function(err, data) {
+                if (err) {
+                    return callback(err);
+                } else {
+                    callback(null, data);
+                }
+            });
+        })
+    }).end();
 };
 
 
 function saveFeed(data, callback) {
-	data.challenge.reverse().forEach(function(item) {
+    data.challenge.reverse().forEach(function(item) {
         db.collection('challenges', function(err, collection) {
             if (err) {
                 return callback(err);
@@ -165,8 +165,8 @@ function saveFeed(data, callback) {
                 });
             }
         })
-	});
+    });
 
-	callback(null, true);
+    callback(null, true);
 };
 
