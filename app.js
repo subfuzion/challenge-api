@@ -9,11 +9,16 @@ var xml2js = require('xml2js');
 
 var app = express();
 app.use(express.bodyParser());
+app.use(function(err, req, res, next) {
+    // default response content type for our routes
+    res.setHeader('Content-Type', 'application/json');
+});
 
 var db = new mongo.Db('challengedb',
 	new mongo.Server('ds033047.mongolab.com', 33047, {auto_reconnect: true}),
 	{w: 'majority'});
 
+console.log('connecting to mongo');
 db.open(function(err, client) {
 	if (err) {
 		console.log('error opening db: ' + err);
@@ -26,7 +31,6 @@ db.open(function(err, client) {
 			if (err) {
 				console.log('error authenticating with database');
 			} else {
-				console.log('authenticated with database');
 				var port = 8080;
 				app.listen(port, function () {
 					console.log('listening on ' + port);
@@ -42,12 +46,15 @@ db.open(function(err, client) {
 // ==================================================================
 
 app.get('/', function(req, res, next) {
+    res.setHeader('Content-Type', 'text/html');
+    res.send('<a href="feed">Challenges</a>');
 });
 
 
 app.get('/feed', function(req, res, next) {
 	getFeed(function(err, json) {
 		if (err) {
+            console.log(err);
 			return next(err);
 		} else {
 			res.end(JSON.stringify(json));
@@ -63,6 +70,7 @@ app.get('/harvest', function(req, res, next) {
 		} else {
 			saveFeed(data, function(err, success) {
 				if (err) {
+                    console.log(err);
 					return next(err);
 				} else {
 					res.end(JSON.stringify(data));
@@ -117,6 +125,13 @@ function getFeed(callback)
 function saveFeed(data, callback) {
 	data.challenge.reverse().forEach(function(item) {
 		var challenge = item;
+
+        db.collection('challenges', function(err, collection) {
+            if (err) {
+                return callback(err);
+            }
+        })
+
 	});
 
 	callback(null, data);
