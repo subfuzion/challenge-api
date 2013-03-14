@@ -78,6 +78,7 @@ app.get('/feed', function(req, res, next) {
  */
 app.put('/bookmarks', function(req, res, next) {
     var ids = req.body.ids;
+    console.log("GET /bookmarks: " + ids)
     getBookmarkedChallenges(ids, function(err, challenges) {
         if (err) {
             console.log(err);
