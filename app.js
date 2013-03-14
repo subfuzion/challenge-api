@@ -3,6 +3,7 @@
 // ==================================================================
 
 var mongo = require('mongodb');
+var BSON = mongo.BSONPure;
 var express = require('express');
 var http = require('http');
 var xml2js = require('xml2js');
@@ -47,6 +48,9 @@ app.get('/', function(req, res, next) {
 });
 
 
+/**
+ * Returns the complete feed
+ */
 app.get('/feed', function(req, res, next) {
     db.collection('challenges', function(err, collection) {
         if (err) {
@@ -69,6 +73,26 @@ app.get('/feed', function(req, res, next) {
 });
 
 
+/**
+ * Returns the requested ("bookmarked") challenges
+ */
+app.put('/bookmarks', function(req, res, next) {
+    var ids = req.body.ids;
+    getBookmarkedChallenges(ids, function(err, challenges) {
+        if (err) {
+            console.log(err);
+            return next(err);
+        } else {
+            var result = { 'challenges': challenges };
+            res.json(result);
+        }
+    });
+});
+
+
+/**
+ * Returns the challenge.gov source feed in JSON format
+ */
 app.get('/remotefeed', function(req, res, next) {
 	getFeed(function(err, json) {
 		if (err) {
@@ -81,7 +105,10 @@ app.get('/remotefeed', function(req, res, next) {
 });
 
 
-app.get('/harvest', function(req, res, next) {
+/**
+ * Start a harvest job
+ */
+app.post('/jobs/harvest', function(req, res, next) {
 	getFeed(function(err, data) {
 		if (err) {
 			return next(err);
@@ -169,4 +196,36 @@ function saveFeed(data, callback) {
 
 	callback(null, true);
 };
+
+
+function getBookmarkedChallenges(ids, callback) {
+    var results = [];
+
+    db.collection('challenges', function(err, collection) {
+        if (err) {
+            return callback(err);
+        } else {
+            var count = ids.length;
+            ids.forEach(function(id) {
+                var oid = BSON.ObjectID(id);
+                collection.findOne({_id: oid}, function(err, challenge) {
+                    if (err) {
+                        return callback(err);
+                    } else {
+                        console.log(challenge);
+                        results.push(challenge);
+
+                        count--;
+                        if(!count) {
+                            callback(null, results);
+                        }
+                    }
+                });
+            });
+        }
+    });
+};
+
+
+
 
