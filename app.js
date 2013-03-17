@@ -7,6 +7,9 @@ var BSON = mongo.BSONPure;
 var express = require('express');
 var http = require('http');
 var xml2js = require('xml2js');
+var weld = require('weld');
+var jsdom = require('jsdom');
+var fs = require('fs');
 
 var app = express();
 app.use(express.bodyParser());
