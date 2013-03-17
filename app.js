@@ -48,10 +48,49 @@ app.get('/', function(req, res, next) {
 });
 
 
+app.get('/info', function(req, res, next) {
+    res.setHeader('Content-Type', 'text/html');
+    res.send('<html><a href="http://challenge.gov">Challenge.gov</a></html>');
+});
+
+
+app.get('/challenges/:id', function(req, res, next) {
+    console.log('GET /challenges/' + req.params.id);
+	res.setHeader("Content-Type", "application/json");
+
+	var oid = req.params.id;
+	oid = oid ? BSON.ObjectID(oid) : null;
+	console.log('oid = ' + oid);
+
+    db.collection('challenges', function(err, collection) {
+        if (err) {
+          console.log(err);
+          return next(err);
+        } else {
+            collection.findOne({_id: oid}, function(err, entry) {
+                if (err) {
+                  console.log(err);
+                  return next(err);
+                } else {
+                    if (entry) {
+                        res.send('<html><a href="' + entry.url + '">' + entry.title + '</a></html>');
+                    } else {
+                        res.send('<html>Not found</html>')
+                    }
+                }
+            });
+        }
+    })
+});
+
+
 /**
- * Returns the complete feed
+ * Returns challenges
  */
-app.get('/feed', function(req, res, next) {
+app.get('/challenges', function(req, res, next) {
+    var sort = parseInt(req.query.sort);
+    console.log("sort=" + sort);
+
     db.collection('challenges', function(err, collection) {
         if (err) {
           console.log(err);
@@ -66,7 +105,7 @@ app.get('/feed', function(req, res, next) {
             });
 
             stream.on('end', function() {
-               res.json(feed);
+                res.json(feed);
             });
         }
     })
@@ -149,6 +188,8 @@ function getFeed(callback)
         resp.on('data', function(chunk) {
             xml += chunk;
         });
+
+        // todo: handle sort
 
         resp.on('end', function() {
             var parseOptions = {
