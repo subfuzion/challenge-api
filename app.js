@@ -44,7 +44,7 @@ db.open(function(err, client) {
 
 app.get('/', function(req, res, next) {
     res.setHeader('Content-Type', 'text/html');
-    res.send('<a href="feed">Challenges</a>');
+    res.send('<a href="challenges">Challenges</a>');
 });
 
 

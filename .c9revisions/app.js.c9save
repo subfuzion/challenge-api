@@ -209,3 +209,4 @@
 {"ts":1363481498429,"patch":[[{"diffs":[[0,"\n/**\n * Returns "],[-1,"the "],[0,"challenges\n */\na"]],"start1":2553,"start2":2553,"length1":36,"length2":32}]],"length":7201,"saved":false}
 {"ts":1363481503059,"patch":[[{"diffs":[[0,"p.get('/"],[-1,"feed"],[1,"cha"],[0,"', funct"]],"start1":2586,"start2":2586,"length1":20,"length2":19}]],"length":7200,"saved":false}
 {"ts":1363481504817,"patch":[[{"diffs":[[0,"et('/cha"],[1,"llenges"],[0,"', funct"]],"start1":2589,"start2":2589,"length1":16,"length2":23}]],"length":7207,"saved":false}
+{"contributors":[],"silentsave":true,"ts":1363504210773,"patch":[[{"diffs":[[0,"a href=\""],[-1,"feed"],[1,"challenges"],[0,"\">Challe"]],"start1":1438,"start2":1438,"length1":20,"length2":26}]],"length":7213,"saved":false}
