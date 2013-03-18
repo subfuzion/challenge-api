@@ -10,9 +10,21 @@ var xml2js = require('xml2js');
 var weld = require('weld');
 var jsdom = require('jsdom');
 var fs = require('fs');
+var path = require('path');
+
 
 var app = express();
-app.use(express.bodyParser());
+app.configure(function() {
+	app.set('port', process.env.PORT || 8080);
+	app.set('views', __dirname + '/views');
+	app.set('view engine', 'jade');
+	app.use(express.favicon());
+	app.use(express.logger('dev'));
+	app.use(express.bodyParser());
+	app.use(express.methodOverride());
+	app.use(app.router);
+	app.use(express.static(path.join(__dirname, 'public')));
+});
 
 var db = new mongo.Db('challengedb',
     new mongo.Server('ds033047.mongolab.com', 33047, {auto_reconnect: true}),
@@ -31,9 +43,8 @@ db.open(function(err, client) {
             if (err) {
                 console.log('error authenticating with database');
             } else {
-                var port = 8080;
-                app.listen(port, function () {
-                    console.log('listening on ' + port);
+                app.listen(app.get('port'), function () {
+                    console.log('listening on ' + app.get('port'));
                 });
             }
         });
@@ -45,10 +56,16 @@ db.open(function(err, client) {
 // Routes
 // ==================================================================
 
-app.get('/', function(req, res, next) {
-    res.setHeader('Content-Type', 'text/html');
-    res.send('<a href="challenges">Challenges</a>');
-});
+var env = {
+	app: app,
+	db: db
+}
+
+var routes = require('./routes')(env)
+	, about = require('./routes/about')(env)
+	, challenges = require('./routes/challenges')(env)
+;
+
 
 
 app.get('/info', function(req, res, next) {
@@ -81,34 +98,6 @@ app.get('/challenges/:id', function(req, res, next) {
                         res.send('<html>Not found</html>')
                     }
                 }
-            });
-        }
-    })
-});
-
-
-/**
- * Returns challenges
- */
-app.get('/challenges', function(req, res, next) {
-    var sort = parseInt(req.query.sort);
-    console.log("sort=" + sort);
-
-    db.collection('challenges', function(err, collection) {
-        if (err) {
-          console.log(err);
-          return next(err);
-        } else {
-            var feed = { challenges: [] };
-
-            var stream = collection.find().stream();
-
-            stream.on('data', function(data) {
-                feed.challenges.push(data);
-            });
-
-            stream.on('end', function() {
-                res.json(feed);
             });
         }
     })

@@ -1,0 +1,27 @@
+extends mobilelayout
+
+block content
+    .wrapper
+        article
+            h2 Introduction
+            p
+                | Challenge.gov is an online challenge platform administered by the U.S. General Services Administration (GSA) in partnership with ChallengePost that empowers the U.S. Government and the public to bring the best ideas and top talent to bear on our nation’s most pressing challenges. This platform is the latest milestone in the Administration’s commitment to use prizes and challenges to promote innovation.
+        article
+            h2 What is a Challenge?
+            p
+                | A challenge is exactly what the name suggests: it is a challenge by one party (a “seeker”) to a third party or parties (a “solver”) to identify a solution to a particular problem or reward contestants for accomplishing a particular goal. Prizes (monetary or non–monetary) often accompany challenges and contests.
+            p
+                | Challenges can range from fairly simple (idea suggestions, creation of logos, videos, digital games and mobile applications) to proofs of concept, designs, or finished products that solve the grand challenges of the 21st century.
+            p For more information, visit Challenge.gov.
+        article
+            h2 What is this project about (challenge-api)?
+            p
+                | This is an open source project to provide a REST API and JSON support on top the raw XML feed that is currently available. This API provides additional support for returning sorted and filtered responses.
+            p
+                | The main goals of this project are to demonstrate building an API adapter over an existing federal data source and to facilitate mobile app development. As a proof-of-concept, the companion project is another open source project for an iPhone App that uses this API to provide similar functionality as the online portal at Challenge.gov.
+        article
+            h2 Technical Overview
+            p
+                | The implementation is based on Node.js for the API (hosted by Modulus.io) and MongoDB for NoSQL data storage (hosted by MongoLab). Periodic harvesting of the source XML feed is scheduled by cron.io. The current schedule is four times per day.
+            p The base URI is: http://challengeapi-7312.onmodulus.net/
+        footer

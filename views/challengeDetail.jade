@@ -1,0 +1,24 @@
+extends mobilelayout
+
+block content
+    .wrapper
+        article
+            h2= title
+            h3= poster
+
+            div(style='width: 150px; height: 150px; border: solid #666666; overflow: hidden; position: relative;')
+                img(src='http://s3.amazonaws.com/challengepost/photos/production/challenge_photos/000/046/423/datas/large.gif?1355778069', style='position: absolute; left: -37px; width: 225px; height: 150px;')
+
+            h4 Challenge Summary
+            p= summary
+
+            h4 Total Prize Money
+            p= prizeMoney
+
+            h3 Important Dates
+
+            h4 Submission Period
+            p Start: #{submissionPeriodStartDate} End: #{submissionPeriodEndDate}
+
+            h4 Winners Announced
+            p= winnersAnnouncedDate
