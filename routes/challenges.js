@@ -85,6 +85,7 @@ function getChallengePage (req, res, next) {
 					if (challenge) {
 						res.render('challengeDetail', {
 							title: challenge.title
+							, imageURL: challenge.image_url
 							, poster: challenge.poster
 							, summary: challenge.summary
 							, prizeMoney: '$' + challenge.prize_money
