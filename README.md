@@ -1,3 +1,5 @@
+[![Build Status](https://drone.io/github.com/tonypujals/challenge-api/status.png)](https://drone.io/github.com/tonypujals/challenge-api/latest)
+
 Introduction
 ------------
 [Challenge.gov][1] is an online challenge platform administered by the [U.S. General Services Administration][2] (GSA) in partnership with [ChallengePost][3] that empowers the U.S. Government and the public to bring the best ideas and top talent to bear on our nation’s most pressing challenges. This platform is the latest milestone in the Administration’s commitment to use prizes and challenges to promote innovation.
