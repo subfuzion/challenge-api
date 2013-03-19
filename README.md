@@ -32,8 +32,8 @@ Current supported REST endpoints:
 
 Endpoint  | Description 
 --------- | ------------- 
-feed      | Returns challenges in JSON format (http://challengeapi-7312.onmodulus.net/feed)    
-harvest   | Invoked by cron.io periodically to harvest the source XML feed at Challenge.gov
+GET /challenges      | Returns challenges in JSON format (http://challengeapi-7312.onmodulus.net/challenges)    
+POST /jobs/harvest   | Invoked by cron.io periodically to harvest the source XML feed at Challenge.gov
 
 The harvest endpoint expects to be supplied an authorization token by the cron.io service.
 
