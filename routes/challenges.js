@@ -23,33 +23,42 @@ function getChallenges (req, res, next) {
 		} else {
 			var feed = { challenges: [] };
 
-			var stream = collection.find().stream();
+			var stream;
+
+			if (sort == 1) {
+				var stream = collection.find().sort({ submission_period_end_date : 1 }).stream();
+			} else if (sort == 2) {
+				var stream = collection.find().sort({ prize_money : -1 }).stream();
+			} else {
+				var stream = collection.find().sort({ posted_date : -1 }).stream();
+			}
 
 			stream.on('data', function(item) {
 
 				if (item.posted_date)
-					item.posted_date = item.posted_date.substring(4, 15);
+					item.posted_date = item.posted_date.toString().substr(4, 11);
 
 				if (item.submission_period_start_date)
-					item.submission_period_start_date = item.submission_period_start_date.substring(4, 15);
+					item.submission_period_start_date = item.submission_period_start_date.toString().substr(4, 11);
 
+				// HACK until v1.1
 				if (item.submission_period_end_date)
-					item.submission_period_end_date = item.submission_period_end_date.substring(4, 15);
+					item.submission_period_end_date = fixDate(item.submission_period_end_date.toString());
 
 				if (item.judging_period_start_date)
-					item.judging_period_start_date = item.judging_period_start_date.substring(4, 15);
+					item.judging_period_start_date = item.judging_period_start_date.toString().substr(4, 11);
 
 				if (item.judging_period_end_date)
-					item.judging_period_end_date = item.judging_period_end_date.substring(4, 15);
+					item.judging_period_end_date = item.judging_period_end_date.toString().substr(4, 11);
 
 				if (item.public_voting_period_start_date)
-					item.public_voting_period_start_date = item.public_voting_period_start_date.substring(4, 15);
+					item.public_voting_period_start_date = item.public_voting_period_start_date.toString().substr(4, 11);
 
 				if (item.public_voting_period_end_date)
-					item.public_voting_period_end_date = item.public_voting_period_end_date.substring(4, 15);
+					item.public_voting_period_end_date = item.public_voting_period_end_date.toString().substr(4, 11);
 
 				if (item.winners_announced_date)
-					item.winners_announced_date = item.winners_announced_date.substring(4, 15);
+					item.winners_announced_date = item.winners_announced_date.toString().substr(4, 11);
 
 				feed.challenges.push(item);
 			});
@@ -59,6 +68,13 @@ function getChallenges (req, res, next) {
 			});
 		}
 	})
+}
+
+function fixDate(d) {
+	if (d) {
+		d = d.substr(4, 6) + ', ' + d.substr(11, 4);
+	}
+	return d;
 }
 
 function getChallenge (req, res, next) {

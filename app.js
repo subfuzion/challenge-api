@@ -226,25 +226,25 @@ function saveFeed(data, callback) {
 	                        item.posted_date = Date();
 
 	                        if (item.submission_period_start_date)
-	                            item.submission_period_start_date = Date(item.submission_period_start_date);
+		                        item.submission_period_start_date = new Date(item.submission_period_start_date);
 
 	                        if (item.submission_period_end_date)
-		                        item.submission_period_end_date = Date(item.submission_period_end_date);
+		                        item.submission_period_end_date = new Date(item.submission_period_end_date);
 
 	                        if (item.judging_period_start_date)
-		                        item.judging_period_start_date = Date(item.judging_period_start_date);
+		                        item.judging_period_start_date = new Date(item.judging_period_start_date);
 
 	                        if (item.judging_period_end_date)
-		                        item.judging_period_end_date = Date(item.judging_period_end_date);
+		                        item.judging_period_end_date = new Date(item.judging_period_end_date);
 
 	                        if (item.public_voting_period_start_date)
-		                        item.public_voting_period_start_date = Date(item.public_voting_period_start_date);
+		                        item.public_voting_period_start_date = new Date(item.public_voting_period_start_date);
 
 	                        if (item.public_voting_period_end_date)
-		                        item.public_voting_period_end_date = Date(item.public_voting_period_end_date);
+		                        item.public_voting_period_end_date = new Date(item.public_voting_period_end_date);
 
 	                        if (item.winners_announced_date)
-		                        item.winners_announced_date = Date(item.winners_announced_date);
+		                        item.winners_announced_date = new Date(item.winners_announced_date);
 
 	                        // convert prize to number
 	                        if (item.prize_money)
