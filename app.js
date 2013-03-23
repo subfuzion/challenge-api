@@ -270,6 +270,14 @@ function saveFeed(data, callback) {
 };
 
 
+function fixDate(d) {
+	if (d) {
+		d = d.toString().substr(4, 6) + ', ' + d.toString().substr(11, 4);
+	}
+	return d;
+}
+
+
 function getBookmarkedChallenges(ids, callback) {
     var results = [];
 
@@ -285,7 +293,33 @@ function getBookmarkedChallenges(ids, callback) {
                         return callback(err);
                     } else {
                         console.log(challenge);
-                        results.push(challenge);
+
+	                    if (challenge.posted_date)
+		                    challenge.posted_date = challenge.posted_date.toString().substr(4, 11);
+
+	                    if (challenge.submission_period_start_date)
+		                    challenge.submission_period_start_date = challenge.submission_period_start_date.toString().substr(4, 11);
+
+	                    // HACK until v1.1
+	                    if (challenge.submission_period_end_date)
+		                    challenge.submission_period_end_date = fixDate(challenge.submission_period_end_date.toString());
+
+	                    if (challenge.judging_period_start_date)
+		                    challenge.judging_period_start_date = challenge.judging_period_start_date.toString().substr(4, 11);
+
+	                    if (challenge.judging_period_end_date)
+		                    challenge.judging_period_end_date = challenge.judging_period_end_date.toString().substr(4, 11);
+
+	                    if (challenge.public_voting_period_start_date)
+		                    challenge.public_voting_period_start_date = challenge.public_voting_period_start_date.toString().substr(4, 11);
+
+	                    if (challenge.public_voting_period_end_date)
+		                    challenge.public_voting_period_end_date = challenge.public_voting_period_end_date.toString().substr(4, 11);
+
+	                    if (challenge.winners_announced_date)
+		                    challenge.winners_announced_date = challenge.winners_announced_date.toString().substr(4, 11);
+
+	                    results.push(challenge);
 
                         count--;
                         if(!count) {

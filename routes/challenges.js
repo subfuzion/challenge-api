@@ -72,7 +72,7 @@ function getChallenges (req, res, next) {
 
 function fixDate(d) {
 	if (d) {
-		d = d.substr(4, 6) + ', ' + d.substr(11, 4);
+		d = d.toString().substr(4, 6) + ', ' + d.toString().substr(11, 4);
 	}
 	return d;
 }
@@ -124,6 +124,11 @@ function getChallengePage (req, res, next) {
 					return next(err);
 				} else {
 					if (challenge) {
+
+						challenge.submission_period_start_date = fixDate(challenge.submission_period_start_date);
+						challenge.submission_period_end_date = fixDate(challenge.submission_period_end_date);
+						challenge.winners_announced_date = fixDate(challenge.winners_announced_date);
+
 						res.render('challengeDetail', {
 							title: challenge.title
 							, imageURL: challenge.image_url
