@@ -141,16 +141,63 @@ app.get('/remotefeed', function(req, res, next) {
  * Start a harvest job
  */
 app.post('/jobs/harvest', function(req, res, next) {
+
+ 	var harvestStatus = {
+		time: Date(),
+		status: "fail", // set to "success" if ok
+		error: "",
+		processedCount: 0,
+		newCount: 0
+	};
+
+	function saveStatus(status, callback) {
+		db.collection('harvestlog', function(err, collection) {
+			var message = "save harvest status: ";
+
+			if (err) {
+				console.log(message + err);
+				return callback(err);
+			} else {
+				collection.save(status, function(err, saved) {
+					if (err) {
+						console.log(message + err);
+						return callback(err);
+					} else {
+						console.log(message + "success");
+						return callback(null);
+					}
+				});
+			}
+		});
+	};
+
 	getFeed(function(err, data) {
 		if (err) {
-			return next(err);
+			console.log(err);
+			harvestStatus.error = err;
+			saveStatus(harvestStatus, function(error, success) {
+				return next(err);
+			});
 		} else {
-			saveFeed(data, function(err, success) {
+			saveFeed(data, function(err, processedCount, newCount) {
 				if (err) {
                     console.log(err);
-                    return next(err);
+					harvestStatus.error = err;
+					saveStatus(harvestStatus, function(error, success) {
+						return next(err);
+					});
                 } else {
-                    res.json(data)
+					harvestStatus.status = "success";
+					harvestStatus.processedCount = processedCount;
+					harvestStatus.newCount = newCount;
+					saveStatus(harvestStatus, function(error, success) {
+						if (error) {
+							return next(err);
+						} else {
+							// res.json(data)
+							res.end();
+						}
+					});
                 }
             });
         }
@@ -200,7 +247,12 @@ function getFeed(callback)
 
 
 function saveFeed(data, callback) {
-    data.challenge.reverse().forEach(function(item) {
+	var challenges = data.challenge;
+	var count = challenges.length;
+	var processedCount = 0;
+	var newCount = 0;
+
+	challenges.reverse().forEach(function(item) {
         db.collection('challenges', function(err, collection) {
             if (err) {
                 return callback(err);
@@ -209,20 +261,14 @@ function saveFeed(data, callback) {
                     if (err) {
                         return callback(err);
                     } else {
+	                    processedCount++;
+
                         if (entry) {
                             console.log('entry exists: ' + entry.title);
+	                        if(processedCount == count) {
+		                        callback(null, processedCount, newCount);
+	                        }
                         } else {
-
-	                        // convert string dates to mongo iso date
-	                        // (current date)
-	                        // submission_period_start_date
-	                        // submission_period_end_date
-	                        // judging_period_start_date
-	                        // judging_period_end_date
-	                        // public_voting_period_start_date
-	                        // public_voting_period_end_date
-	                        // winners_announced_date
-
 	                        item.posted_date = Date();
 
 	                        if (item.submission_period_start_date)
@@ -250,13 +296,15 @@ function saveFeed(data, callback) {
 	                        if (item.prize_money)
 	                            item.prize_money = Number(item.prize_money);
 
-	                        console.log(item);
-
                             collection.save(item, function(err, saved) {
                                 if (err) {
                                     return callback(err);
                                 } else {
-                                    console.log("saved: " + item.title);
+	                                console.log("saved: " + item.title);
+	                                newCount++;
+	                                if(processedCount == count) {
+		                                callback(null, processedCount, newCount);
+	                                }
                                 }
                             });
                         }
@@ -265,8 +313,6 @@ function saveFeed(data, callback) {
             }
         })
     });
-
-    callback(null, true);
 };
 
 
