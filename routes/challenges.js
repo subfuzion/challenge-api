@@ -25,8 +25,33 @@ function getChallenges (req, res, next) {
 
 			var stream = collection.find().stream();
 
-			stream.on('data', function(data) {
-				feed.challenges.push(data);
+			stream.on('data', function(item) {
+
+				if (item.posted_date)
+					item.posted_date = item.posted_date.substring(4, 15);
+
+				if (item.submission_period_start_date)
+					item.submission_period_start_date = item.submission_period_start_date.substring(4, 15);
+
+				if (item.submission_period_end_date)
+					item.submission_period_end_date = item.submission_period_end_date.substring(4, 15);
+
+				if (item.judging_period_start_date)
+					item.judging_period_start_date = item.judging_period_start_date.substring(4, 15);
+
+				if (item.judging_period_end_date)
+					item.judging_period_end_date = item.judging_period_end_date.substring(4, 15);
+
+				if (item.public_voting_period_start_date)
+					item.public_voting_period_start_date = item.public_voting_period_start_date.substring(4, 15);
+
+				if (item.public_voting_period_end_date)
+					item.public_voting_period_end_date = item.public_voting_period_end_date.substring(4, 15);
+
+				if (item.winners_announced_date)
+					item.winners_announced_date = item.winners_announced_date.substring(4, 15);
+
+				feed.challenges.push(item);
 			});
 
 			stream.on('end', function() {

@@ -181,8 +181,6 @@ function getFeed(callback)
             xml += chunk;
         });
 
-        // todo: handle sort
-
         resp.on('end', function() {
             var parseOptions = {
                 "explicitArray": false,
@@ -214,6 +212,46 @@ function saveFeed(data, callback) {
                         if (entry) {
                             console.log('entry exists: ' + entry.title);
                         } else {
+
+	                        // convert string dates to mongo iso date
+	                        // (current date)
+	                        // submission_period_start_date
+	                        // submission_period_end_date
+	                        // judging_period_start_date
+	                        // judging_period_end_date
+	                        // public_voting_period_start_date
+	                        // public_voting_period_end_date
+	                        // winners_announced_date
+
+	                        item.posted_date = Date();
+
+	                        if (item.submission_period_start_date)
+	                            item.submission_period_start_date = Date(item.submission_period_start_date);
+
+	                        if (item.submission_period_end_date)
+		                        item.submission_period_end_date = Date(item.submission_period_end_date);
+
+	                        if (item.judging_period_start_date)
+		                        item.judging_period_start_date = Date(item.judging_period_start_date);
+
+	                        if (item.judging_period_end_date)
+		                        item.judging_period_end_date = Date(item.judging_period_end_date);
+
+	                        if (item.public_voting_period_start_date)
+		                        item.public_voting_period_start_date = Date(item.public_voting_period_start_date);
+
+	                        if (item.public_voting_period_end_date)
+		                        item.public_voting_period_end_date = Date(item.public_voting_period_end_date);
+
+	                        if (item.winners_announced_date)
+		                        item.winners_announced_date = Date(item.winners_announced_date);
+
+	                        // convert prize to number
+	                        if (item.prize_money)
+	                            item.prize_money = Number(item.prize_money);
+
+	                        console.log(item);
+
                             collection.save(item, function(err, saved) {
                                 if (err) {
                                     return callback(err);
