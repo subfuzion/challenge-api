@@ -144,7 +144,8 @@ app.get('/remotefeed', function (req, res, next) {
 /**
  * Start a harvest job
  */
-app.post('/jobs/harvest', function (req, res, next) {
+// cron.io doesn't support POST
+app.get('/jobs/harvest', function (req, res, next) {
 
 	var harvestStatus = {
 		time: Date(),
