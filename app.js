@@ -26,6 +26,8 @@ app.configure(function () {
 	app.use(express.static(path.join(__dirname, 'public')));
 });
 
+// todo: use new MongoClient and mongodb url
+
 var db = new mongo.Db('challengedb',
 	new mongo.Server('ds033047.mongolab.com', 33047, {auto_reconnect: true}),
 	{w: 'majority'});
