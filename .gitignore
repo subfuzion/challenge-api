@@ -1,8 +1,8 @@
+node_modules/
 npm-debug.log
 
-.idea/
-node_modules/
-
+# vendor-specific
 .DS_Store
-
+.idea/
 .c9revisions/
+modulus-auto-zip-*.zip
